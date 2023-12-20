@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- Dao: query 찾는 분류 기준 
+        namespace + id -> com.pcwk.ehr.anno.doSelectOne
+  -->
+  <mapper namespace="com.pcwk.ehr.match">
+    
+    <resultMap type="UserVO"  id="userMap">
+        <result column = "no" property = "no"/>
+        <result column = "nm" property = "nm"/>
+        <result column = "birth" property = "birth"/>
+        <result column = "id" property = "id"/>
+        <result column = "pw" property = "pw"/>
+        <result column = "email" property = "email"/>
+        <result column = "reg_ymd" property = "reg_ymd"/>
+        <result column = "chat" property = "chat"/>
+        <result column = "act" property = "act"/>
+        <result column = "tier" property = "tier"/>
+        <result column = "click" property = "click"/>
+        <result column = "pop_scr" property = "pop_scr"/>
+    </resultMap>
+    
+    <resultMap type = "MatchVO" id = "matchMap">
+        <result column = "no" property = "no"/>
+        <result column = "id1" property = "id1"/>
+        <result column = "id2" property = "id2"/>
+        <result column = "match_ymd" property = "match_ymd"/>
+    </resultMap>
+    
+    <select id="doFindValNickname" parameterType = "UserVO" resultType = "String">
+        SELECT valnick
+        FROM users
+        WHERE id = #{id}
+    </select>
+    
+    <select id="doFindLolcheNickname" parameterType = "UserVO" resultType = "String">
+        SELECT lolchenick
+        FROM users
+        WHERE id = #{id}
+    </select>
+    
+    <select id="doFindLolNickname" parameterType = "UserVO" resultType = "String">
+        SELECT lolnick
+        FROM users
+        WHERE id = #{id}
+    </select>
+    
+    <insert id="doSaveMatch" parameterType = "MatchVO">
+        INSERT INTO matching(
+        id1,
+        id2
+        ) VALUES (          
+            #{id1},
+            #{id2}
+        )
+    </insert>
+    
+    <update id="doFinishMatch" parameterType = "UserVO">
+        UPDATE users         
+        SET click = 0
+        WHERE
+            id = #{id}
+    </update>
+    
+    <select id = "doFindChatValue" parameterType = "UserVO" resultType = "int">
+        SELECT chat
+        FROM users
+        WHERE id = #{id}
+    </select>
+    
+    <select id="doMatch" parameterType = "UserVO" resultType = "String">
+        SELECT id
+        FROM users
+        WHERE (tier IN ((#{tier} - 1), #{tier}, (#{tier} + 1)))
+        AND (chat = #{chat} OR act = #{act})
+        AND click = #{click}
+        AND id NOT IN (#{id})
+    </select>
+    
+  </mapper>
